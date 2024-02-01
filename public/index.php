@@ -52,7 +52,7 @@ $userInfoFields = [
 ];
 
 if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referral_form_nonce'], 'referral_form')) {
-    
+
     $data = [];
     foreach ($_POST as $key => $value) {
         $data[$key] = sanitize_text_field($value);
@@ -63,16 +63,16 @@ if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referra
         return;
     }
 
-    if(strlen($data['phone']) !== 10) {
+    if (strlen($data['phone']) !== 10) {
         echo '<div class="alert alert-error">Invalid phone number</div>';
         return;
     }
 
-    if(!is_numeric($data['phone'])) {
+    if (!is_numeric($data['phone'])) {
         echo '<div class="alert alert-error">Invalid phone number</div>';
     }
 
-    if(!is_numeric($data['mileage'])) {
+    if (!is_numeric($data['mileage'])) {
         echo '<div class="alert alert-error">Invalid mileage</div>';
     }
 
@@ -94,7 +94,7 @@ if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referra
             "firstName": "' . $data['first_name'] . '",
             "lastName": "' . $data['last_name'] . '",
             "email": "' . $data['email'] . '",
-            "referralCode": "'.$data['referral_code'].'",
+            "referralCode": "' . $data['referral_code'] . '",
             "phoneNumber": "' . $data['phone'] . '",
             "customOption1Name": "Is Your your vehicle currently under factory warranty?",
             "customOption1Value": "' . $data['factory_warranty'] . '",
@@ -136,11 +136,12 @@ if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referra
         <?= wp_nonce_field('referral_form', 'referral_form_nonce') ?>
         <div class="card bg-white rounded-none shadow-lg px-4 lg:px-8 py-5">
             <div class="card-body space-y-1">
+                <h1 class="text-3xl text-neutral-700 font-bold uppercase italic mb-5">Get Affordable Vehicle Coverage</h1>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-[.75rem]">
                     <?php
                     foreach ($userInfoFields as $field) {
                         echo '<div class="form-control">';
-                        echo '<input maxlength="'.$field['maxlength'].'" type="' . $field['type'] . '" name="' . $field['name'] . '" id="' . $field['id'] . '" placeholder="' . $field['placeholder'] . '" value="' . (isset($_POST[$field['name']]) ? esc_attr($_POST[$field['name']]) : '') . '" class="input input-bordered w-full placeholder:text-sm shadow-sm" />';
+                        echo '<input maxlength="' . $field['maxlength'] . '" type="' . $field['type'] . '" name="' . $field['name'] . '" id="' . $field['id'] . '" placeholder="' . $field['placeholder'] . '" value="' . (isset($_POST[$field['name']]) ? esc_attr($_POST[$field['name']]) : '') . '" class="input input-bordered w-full placeholder:text-sm shadow-sm" />';
                         echo '</div>';
                     }
                     ?>
