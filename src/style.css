@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.nav-text,
+button {
+  font-family: "Rajdhani", Helvetica, Arial, sans-serif !important;
+}
+
+span,
+p,
+label,
+small,
+strong,
+input,
+select,
+option,
+em {
+  font-family: "helvetica";
+}
+
+input::placeholder {
+  font-family: "helvetica";
+}
+
+@layer components {
+  body {
+    @apply bg-[#EFF3F5] min-h-screen;
+  }
+
+  .text-desp-blue {
+    @apply text-[#3F5867]
+  }
+
+  .bg-desp-green {
+    @apply bg-[#0AECAF]
+  }
+
+  .text-desp-green {
+    @apply text-[#0AECAF]
+  }
+
+  .underlined-input {
+    @apply bg-transparent border-b-[2px] border-[#3F5867] focus:outline-none pb-1 px-1 outline-none
+  }
+
+  .underlined-select {
+    @apply bg-transparent border-b-[2px] border-[#3F5867] focus:outline-none px-1 outline-none
+  }
+
+  .btn {
+    @apply -skew-x-12 !important;
+    font-family: 'Bebas Neue', sans-serif !important;
+  }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: #EFF3F5;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #3f586771;
+  border-radius: 10px;
+}
+
+button:hover i {
+  color: white !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.input {
+  @apply bg-white outline-none;
+  border-radius: 5px;
+  box-shadow: inset 1px 2px 0 rgba(0,0,0,.06);
+}
+
+.select:focus {
+  @apply outline-none rounded-[5px] shadow-sm;
+}
+
+.select option {
+  @apply text-sm;
+}
+
+.select option:hover {
+  @apply bg-desp-green;
+}
+
+.select {
+  @apply bg-white rounded-[5px];
+}
