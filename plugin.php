@@ -11,7 +11,7 @@ function referral_form_enqueue_scripts()
 {
     global $post;
     if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'referral_form')) {
-        $referral_script_url = (defined('WP_DEBUG') && WP_DEBUG) ? 'http://localhost:3000/src/main.js' : plugin_dir_url(__FILE__) . 'dist/assets/main-s5au6kZ_.js';
+        $referral_script_url = (defined('WP_DEBUG') && WP_DEBUG) ? 'http://localhost:3000/src/main.js' : plugin_dir_url(__FILE__) . 'dist/assets/main-YTN2Bx7c.js';
         wp_enqueue_script('referral-plugin-script', $referral_script_url, array(), false, true);
     }
 }
@@ -22,7 +22,7 @@ function referral_form_enqueue_styles()
 {
     global $post;
     if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'referral_form')) {
-        $referral_style_url = plugin_dir_url(__FILE__) . 'dist/assets/main-GL6bqVXQ.css';
+        $referral_style_url = plugin_dir_url(__FILE__) . 'dist/assets/main-j4AFURBj.css';
         wp_enqueue_style('referral-plugin-styles', $referral_style_url);
     }
 }

@@ -15,6 +15,7 @@ $userInfoFields = [
         'type' => 'text',
         'id' => 'first_name',
         'value' => '',
+        'maxlength' => '50'
     ],
     [
         'name' => 'last_name',
@@ -22,6 +23,7 @@ $userInfoFields = [
         'type' => 'text',
         'id' => 'last_name',
         'value' => '',
+        'maxlength' => '50'
     ],
     [
         'name' => 'email',
@@ -29,6 +31,7 @@ $userInfoFields = [
         'type' => 'email',
         'id' => 'email',
         'value' => '',
+        'maxlength' => '100'
     ],
     [
         'name' => 'phone',
@@ -36,20 +39,41 @@ $userInfoFields = [
         'type' => 'text',
         'id' => 'phone',
         'value' => '',
+        'maxlength' => '10'
+    ],
+    [
+        'name' => 'referral_code',
+        'placeholder' => 'Referral Code',
+        'type' => 'text',
+        'id' => 'referral_code',
+        'value' => '',
+        'maxlength' => '20'
     ]
 ];
 
 if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referral_form_nonce'], 'referral_form')) {
     
     $data = [];
-    foreach ($request as $key => $value) {
-        $sanitized[$key] = sanitize_text_field($value);
+    foreach ($_POST as $key => $value) {
+        $data[$key] = sanitize_text_field($value);
     }
-    return $sanitized;
 
     if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         echo '<div class="alert alert-error">Invalid email address</div>';
         return;
+    }
+
+    if(strlen($data['phone']) !== 10) {
+        echo '<div class="alert alert-error">Invalid phone number</div>';
+        return;
+    }
+
+    if(!is_numeric($data['phone'])) {
+        echo '<div class="alert alert-error">Invalid phone number</div>';
+    }
+
+    if(!is_numeric($data['mileage'])) {
+        echo '<div class="alert alert-error">Invalid mileage</div>';
     }
 
     $api_key = $_ENV['REFERRAL_ROCK_BASIC_AUTH_KEY'];
@@ -70,18 +94,19 @@ if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referra
             "firstName": "' . $data['first_name'] . '",
             "lastName": "' . $data['last_name'] . '",
             "email": "' . $data['email'] . '",
-            "referralCode": "' . $data['referral_code'] . '",
-            "phone": "' . $data['phone'] . '",
-            "customText1Name": "Is Your your vehicle currently under factory warranty?",
-            "customText1Value": "' . $data['vehicle_warranty'] . '",
-            "customText2Name": "What is your approximate current mileage?",
-            "customText2Value": "' . $data['mileage'] . '",
-            "customText3Name": "What is your Vehicle Year?",
-            "customText3Value": "' . $data['vehicle_year'] . '",
-            "customText4Name": "What is your Vehicle Make?",
-            "customText4Value": "' . $data['vehicle_make'] . '",
-            "customText5Name": "What is your Vehicle Model?",
-            "customText5Value": "' . $data['vehicle_model'] . '",
+            "referralCode": "'.$data['referral_code'].'",
+            "phoneNumber": "' . $data['phone'] . '",
+            "customOption1Name": "Is Your your vehicle currently under factory warranty?",
+            "customOption1Value": "' . $data['factory_warranty'] . '",
+            "customOption2Name": "What is your approximate current mileage?",
+            "customOption2Value": "' . $data['mileage'] . '",
+            "customText1Name": "What is your Vehicle Year?",
+            "customText1Value": "' . $data['vehicle_year'] . '",
+            "customText2Name": "What is your Vehicle Make?",
+            "customText2Value": "' . $data['vehicle_make'] . '",
+            "customText3Name": "What is your Vehicle Model?",
+            "customText3Value": "' . $data['vehicle_model'] . '",
+            "status": "pending"
         }',
         CURLOPT_HTTPHEADER => array(
             'Content-Type: application/json',
@@ -95,7 +120,14 @@ if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referra
 
     $response = json_decode($response, true);
 
-    echo '<div class="alert alert-success">'. $response['message'] .'</div>';
+    $redirect_url = wp_get_referer();
+
+    if ($redirect_url) {
+        wp_safe_redirect($redirect_url);
+        exit;
+    } else {
+        wp_redirect(home_url());
+    }
 }
 ?>
 
@@ -104,16 +136,16 @@ if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referra
         <?= wp_nonce_field('referral_form', 'referral_form_nonce') ?>
         <div class="card bg-white rounded-none shadow-lg px-4 lg:px-8 py-5">
             <div class="card-body space-y-1">
-                <div class="grid grid-cols-1 md:grid-cols-<?= floor(count($userInfoFields) / 2) ?> lg:grid-cols-<?= count($userInfoFields) ?> gap-[.75rem]">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-[.75rem]">
                     <?php
                     foreach ($userInfoFields as $field) {
                         echo '<div class="form-control">';
-                        echo '<input type="' . $field['type'] . '" name="' . $field['name'] . '" id="' . $field['id'] . '" placeholder="' . $field['placeholder'] . '" value="' . (isset($_POST[$field['name']]) ? esc_attr($_POST[$field['name']]) : '') . '" class="input input-bordered w-full placeholder:text-sm shadow-sm" />';
+                        echo '<input maxlength="'.$field['maxlength'].'" type="' . $field['type'] . '" name="' . $field['name'] . '" id="' . $field['id'] . '" placeholder="' . $field['placeholder'] . '" value="' . (isset($_POST[$field['name']]) ? esc_attr($_POST[$field['name']]) : '') . '" class="input input-bordered w-full placeholder:text-sm shadow-sm" />';
                         echo '</div>';
                     }
                     ?>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[.75rem]">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-[.75rem]">
                     <div class="form-control">
                         <select name="vehicle_year" id="vehicle_year" class="select select-bordered">
                             <option value="" selected disabled>Vehicle Year</option>
@@ -136,6 +168,13 @@ if (isset($_POST['referral_form_submission']) && wp_verify_nonce($_POST['referra
                     </div>
                     <div class="form-control">
                         <input type="text" class="input input-bordered w-full placeholder:text-sm shadow-sm" name="mileage" id="mileage" placeholder="Mileage">
+                    </div>
+                    <div class="form-control">
+                        <select name="factory_warranty" id="factory_warranty" class="select select-bordered">
+                            <option value="" selected disabled>Active Factory Warranty?</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
                     </div>
                 </div>
                 <div class="flex justify-center">
